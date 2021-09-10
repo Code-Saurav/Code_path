@@ -12,22 +12,28 @@ import java.util.List;
 
 // Responsible for displaying data from the model into a row in the recycler view
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
+    public interface onLongClickListener{
+        void onItemLongClicked(int position);
+    }
 
     List<String> items;
-    public ItemsAdapter(List<String> items) {
+    onLongClickListener longClickListener;
+
+    public ItemsAdapter(List<String> items, onLongClickListener longClickListener) {
         this.items = items;
+        this.longClickListener = longClickListener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //Use layout inflator to inflate a view
-        // wrap it inside a View Holder and return it
-
         View todoView = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1,parent,false);
+        // wrap it inside a View Holder and return it
         return new ViewHolder(todoView);
     }
 
+    //Responsible for binding data to a particular view holder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         //Grab the item the position
@@ -52,9 +58,17 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
             tvItem = itemView.findViewById(android.R.id.text1);
 
         }
-        // update teh view inside of the view holde rwiht this data
+        // update the view inside of the view holde rwiht this data
         public void bind(String item) {
             tvItem.setText(item);
+            tvItem.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    //Notify adapter that an item an item is inserted
+                    longClickListener.onItemLongClicked(getAdapterPosition());
+                    return true;
+                }
+            });
         }
     }
 }
